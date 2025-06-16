@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mientes Tan Bien</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+      color: black;
+      position: relative;
+    }
+
+    .drop {
+      position: absolute;
+      top: -10px;
+      width: 2px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(100vh); }
+    }
+
+    .corner {
+      position: absolute;
+      font-size: 2rem;
+      color: rgb(244, 239, 239);
+      font-weight: bold;
+    }
+
+    .corner.top-left { top: 10px; left: 10px; }
+    .corner.top-right { top: 10px; right: 10px; }
+    .corner.bottom-left { bottom: 10px; left: 10px; }
+    .corner.bottom-right { bottom: 10px; right: 10px; }
+
+    .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      max-width: 90%;
+      color: white;
+      background: rgba(0,0,0,0.6);
+      padding: 1rem;
+      border-radius: 10px;
+      font-size: 3rem;
+    }
+
+    button {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="bg-audio" loop>
+    <source src="fondo.mp3.mp4" type="audio/mpeg">
+  </audio>
+
+  <div class="corner top-left">Mientes tan bien</div>
+  <div class="corner top-right">Mientes tan bien</div>
+  <div class="corner bottom-left">Mientes tan bien</div>
+  <div class="corner bottom-right">Mientes tan bien</div>
+
+  <div class="center-text" id="lyrics">Haz clic en "Siguiente" para comenzar.</div>
+
+  <button onclick="nextVerse()">Siguiente</button>
+
+  <script>
+    const verses = [
+      `Hoy<br>Ya me duele menos recordar lo que me hiciste`,
+      `Ya casi olvido lo poco que me quisiste<br>Y cuando me prometiste<br>Que lo nuestro era pa’ siempre<br>Y sin hablar a la siguiente semana<br>Solo te fuiste`,
+      `Yo a solas pensando que me amabas<br>Mientras que a solas con otro te acostabas<br>Lo veía en tu mirada<br>Dime cuánto te costaba decir que no sentías nada`,
+      `Ese cabrón solo te quiere a veces<br>Te lo hace y luego se desaparece<br>Cambiaste nuestro amor por unos meses<br>Que el karma te dé lo que te mereces<br>Pa ti<br>Y lo que te mereces es que te hagan sufrir`,
+      `Es que mientes tan bien<br>Que aunque sepa que mientes me lo creo también<br>Espero que tu nuevo intento te salga bien<br>Que te enseñe a querer<br>Yo no lo pude hacer`,
+      `Y lo que más me duele es que mientes tan bien<br>Y que ese para siempre me lo creí también<br>Todas tus promesas quedaron en papel<br>Creo que me equivoqué<br>Era el amor de mi vida<br>Y ahora solo es mi ex`,
+      `Perdón que te vuelva a llamar<br>No quería molestarte pero ando borracho<br>Juré que no te iba a buscar pero volví a encontrarte<br>En el fondo del vaso`,
+      `No hay necesidad<br>No digas nada más<br>Sé que la ando cagando<br>Pero hay algo que traigo en el pecho<br>Que desde hace rato ya quería sacarlo`,
+      `Dime cómo se olvida el amor de tu vida<br>En tan solo unos días no lo entiendo<br>Quédate con las fotos y con los recuerdos<br>Pero devuélveme mi tiempo`,
+      `Contigo perdí, todo te lo di<br>Yo pa ti solamente era un juego<br>Gracias a ti ya entendí<br>Al amor no le apuesto de nuevo`,
+      `Es que mientes tan bien<br>Que aunque sepa que mientes me lo creo también<br>Espero que tu nuevo intento te salga bien<br>Que te enseñe a querer<br>Yo no lo pude hacer`,
+      `Y lo que más me duele es que mientes tan bien<br>Y que ese para siempre me lo creí también<br>Todas tus promesas quedaron en papel<br>Creo que me equivoqué<br>Era el amor de mi vida`,
+      `Y ahora vete con él<br>O con todos los que te dijeron que te iban a amar y querer<br>Solita te darás cuenta que ninguno lo sabrá hacer<br>Y vendrás arrepentida con la carita de infiel`,
+      `Pero para ese momento yo ya no voy a estar para ti<br>Y ya habré olvidado lo que fuimos<br>Estaré volando a Madrid<br>Yendo al lugar que siempre quisimos`,
+      `Pero tú no estarás ahí<br>Estaré con otra abriendo nuestro vino<br>El vino de San Valentín<br>Ese que tú y yo nunca nos bebimos`,
+      `Es que mientes tan bien<br>Que aunque sepa que mientes me lo creo también<br>Espero que tu nuevo intento te salga bien<br>Que te enseñe a querer`,
+      `Yo no lo pude hacer<br>Y lo que más me duele es que mientes tan bien<br>Y que ese para siempre me lo creí también<br>Todas tus promesas quedaron en papel`,
+      `Creo que me equivoqué<br>Era el amor de mi vida<br>Y ahora solo es mi ex<br>Es el Blanko ma compadre`,
+      `Junto a mi compa Yubeili<br>Y mi compa T-Trax<br>Directamente desde la capital de Ecuador<br>Ecuador y México juntos, pa’ todos los del corazón roto`,
+      `Y ahora solo es mi ex`
+    ];
+
+    let index = 0;
+
+    function nextVerse() {
+      if (index < verses.length) {
+        document.getElementById('lyrics').innerHTML = verses[index];
+        index++;
+      } else {
+        document.getElementById('lyrics').innerHTML = "Fin de la canción.";
+      }
+    }
+
+    // Crear gotas
+    for (let i = 0; i < 100; i++) {
+      const drop = document.createElement('div');
+      drop.classList.add('drop');
+      drop.style.left = Math.random() * 100 + 'vw';
+      drop.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+      drop.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(drop);
+    }
+    document.body.addEventListener('click', function() {
+  const audio = document.getElementById('bg-audio');
+  audio.play();
+}, { once: true });
+
+  </script>
+</body>
+</html>
